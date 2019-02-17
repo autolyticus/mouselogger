@@ -3,12 +3,27 @@
 // Copyright (C) 2019 g <g@ABCL>
 // Distributed under terms of the MIT license.
 //
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct input_event {
     pub _click: u8,
     pub x: i8,
     pub y: i8,
+}
+
+use std::fmt;
+impl fmt::Debug for input_event {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{{dx = {}, dy = {}, left = {}, middle = {}, right = {}}}",
+            self.x,
+            self.y,
+            self._click & 1,
+            (self._click >> 2) & 1,
+            (self._click >> 1) & 1,
+        )
+    }
 }
 
 use std::fs::File;
@@ -39,7 +54,7 @@ fn main() -> io::Result<()> {
         }
         x += ie.x as i32;
         y += ie.y as i32;
-        println!("x = {}, dx = {}, y = {}, dy = {}", x, ie.x, y, ie.y);
+        println!("x = {}, y = {}, mouseevent = {:?}", x, y, ie);
     }
     Ok(())
 }
